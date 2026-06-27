@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="dashboard">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div>
+          <div class="brand-title">PhishGuard</div>
+          <div class="brand-subtitle">Email Threat Analysis</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-note">Local Phase 1 demo. AWS connection will be added only after the full system works locally.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+        <div class="page-title">
+          <h1>Dashboard</h1>
+          <p>Overview of phishing email analysis activity.</p>
+        </div>
+        <div class="top-actions">
+          <a class="btn primary" href="analyze.html">New Analysis</a>
+          <div class="avatar">DU</div>
+        </div>
+      </header>
+
+      <section class="content grid">
+        <div class="grid cards">
+          <div class="card">
+            <div class="label">Total Scans</div>
+            <div class="value" id="totalScans">0</div>
+            <div class="hint">All email checks saved locally</div>
+          </div>
+          <div class="card">
+            <div class="label">Safe</div>
+            <div class="value" id="safeScans">0</div>
+            <div class="hint">Low-risk messages</div>
+          </div>
+          <div class="card">
+            <div class="label">Suspicious</div>
+            <div class="value" id="suspiciousScans">0</div>
+            <div class="hint">Needs user verification</div>
+          </div>
+          <div class="card">
+            <div class="label">Phishing</div>
+            <div class="value" id="phishingScans">0</div>
+            <div class="hint">High-risk messages</div>
+          </div>
+        </div>
+
+        <div class="grid two-col">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Weekly Scan Activity</h2>
+              <span class="help-text">Mock visual for Phase 1</span>
+            </div>
+            <div class="panel-body">
+              <div class="mock-chart">
+                <div class="bar" style="height: 42%"><span>Mon</span></div>
+                <div class="bar" style="height: 65%"><span>Tue</span></div>
+                <div class="bar" style="height: 55%"><span>Wed</span></div>
+                <div class="bar" style="height: 82%"><span>Thu</span></div>
+                <div class="bar" style="height: 70%"><span>Fri</span></div>
+                <div class="bar" style="height: 38%"><span>Sat</span></div>
+                <div class="bar" style="height: 25%"><span>Sun</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Average Risk</h2>
+            </div>
+            <div class="panel-body">
+              <div class="card" style="box-shadow:none">
+                <div class="label">Current average score</div>
+                <div class="value" id="avgScore">0/100</div>
+                <p class="help-text">Risk score is calculated from suspicious words, links, sender domain and attachments.</p>
+              </div>
+              <div class="pill-row" style="margin-top:16px">
+                <span class="check-pill">Sender check</span>
+                <span class="check-pill">Link check</span>
+                <span class="check-pill">Attachment check</span>
+                <span class="check-pill">Keyword check</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Recent Scans</h2>
+            <a href="scan-history.html" class="btn">View All</a>
+          </div>
+          <div class="panel-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Sender</th>
+                  <th>Subject</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="recentScans"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

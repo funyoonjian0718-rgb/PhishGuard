@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Scan Details</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="details">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-note">Detailed view for one selected email scan.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+        <div class="page-title"><h1>Scan Details</h1><p>Full details of the selected analysis record.</p></div>
+        <div class="top-actions"><a href="scan-history.html" class="btn">Back to History</a><div class="avatar">DU</div></div>
+      </header>
+
+      <section class="content grid two-col">
+        <div class="panel">
+          <div class="panel-header"><h2>Selected Email</h2><span id="resultBadge" class="badge suspicious">-</span></div>
+          <div class="panel-body grid">
+            <div class="risk-meter"><div class="risk-fill" id="riskFill"></div></div>
+            <p class="help-text">Risk Score: <strong id="riskScore">0/100</strong></p>
+            <div><div class="label">Sender</div><p class="help-text" id="resultSender">-</p></div>
+            <div><div class="label">Subject</div><p class="help-text" id="resultSubject">-</p></div>
+            <div><div class="label">Email Body</div><p class="help-text" id="resultBody">-</p></div>
+            <div><div class="label">Links</div><p class="help-text" id="resultLinks">-</p></div>
+            <div><div class="label">Attachment</div><p class="help-text" id="resultAttachment">-</p></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h2>Matched Rules</h2></div>
+          <div class="panel-body"><ul class="rule-list" id="matchedRules"></ul></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

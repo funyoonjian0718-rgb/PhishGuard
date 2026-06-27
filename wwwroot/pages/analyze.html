@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Analyze Email</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="analyze">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-note">This page collects email details and runs the local rule-based phishing check.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+        <div class="page-title">
+          <h1>Analyze Email</h1>
+          <p>Paste suspicious email information to calculate a risk score.</p>
+        </div>
+        <div class="top-actions"><button class="btn" id="sampleEmailBtn" type="button">Load Sample</button><div class="avatar">DU</div></div>
+      </header>
+
+      <section class="content grid two-col">
+        <div class="panel">
+          <div class="panel-header"><h2>Email Details</h2></div>
+          <div class="panel-body">
+            <form id="analyzeForm">
+              <div class="form-group">
+                <label for="sender">Sender Email</label>
+                <input id="senderEmail" type="email" placeholder="example@domain.com" required />
+              </div>
+              <div class="form-group">
+                <label for="subject">Email Subject</label>
+                <input id="subject" type="text" placeholder="Urgent: Account verification required" required />
+              </div>
+              <div class="form-group">
+                <label for="body">Email Body</label>
+                <textarea id="emailBody" placeholder="Paste the email message here..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="links">Links Found in Email</label>
+                <input id="link" type="text" placeholder="https://example.com/login" />
+              </div>
+              <div class="form-group">
+                <label for="attachment">Attachment Name</label>
+                <input id="attachmentName" type="text" placeholder="invoice.pdf / update.zip" />
+              </div>
+              <button class="btn primary" type="submit">Analyze Email</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h2>What the System Checks</h2></div>
+          <div class="panel-body">
+            <p class="help-text">For Phase 1, this is a local rule-based prototype. It checks the visible email content and assigns risk points based on common phishing indicators.</p>
+            <div class="pill-row">
+              <span class="check-pill">Urgent words</span>
+              <span class="check-pill">Password requests</span>
+              <span class="check-pill">Suspicious links</span>
+              <span class="check-pill">HTTP links</span>
+              <span class="check-pill">Free sender domains</span>
+              <span class="check-pill">Risky attachments</span>
+            </div>
+            <div class="alert" style="margin-top:18px">Important: This is for defensive analysis only. Users should verify suspicious emails with the real organization before clicking links or opening attachments.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

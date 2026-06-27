@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Profile</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="profile">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-note">Profile page is static/local for now and will connect to real user accounts later.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+        <div class="page-title"><h1>Profile</h1><p>Current local user information.</p></div>
+        <div class="top-actions"><a href="login.html" class="btn">Logout</a><div class="avatar">DU</div></div>
+      </header>
+
+      <section class="content grid two-col">
+        <div class="panel">
+          <div class="panel-header"><h2>User Details</h2></div>
+          <div class="panel-body">
+            <p><strong>Name:</strong> <span id="profileName">Demo User</span></p>
+            <p><strong>Email:</strong> <span id="profileEmail">demo@phishguard.com</span></p>
+            <p class="help-text">This is local demo data. Final user records should be stored securely in the backend/database.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h2>Account Role</h2></div>
+          <div class="panel-body"><span class="badge safe">Standard User</span><p class="help-text">User can submit emails, view results, and check history.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

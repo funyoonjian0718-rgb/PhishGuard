@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Register</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="register">
+  <div class="auth-wrapper">
+    <div class="panel auth-card">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div>
+          <div class="brand-title">PhishGuard</div>
+          <div class="brand-subtitle">Create local demo account</div>
+        </div>
+      </div>
+      <h1>Register</h1>
+      <div class="alert" id="registerAlert">This is Phase 1 local storage only. Real authentication will be added later.</div>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Your name" required />
+        </div>
+        <div class="form-group">
+          <label for="emailR">Email Address</label>
+          <input type="email" id="emailR" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="passwordR">Password</label>
+          <input type="password" id="passwordR" placeholder="Minimum 8 characters" minlength="8" required />
+        </div>
+        <button class="btn primary full" type="submit">Create Account</button>
+      </form>
+      <p class="help-text">Already have an account? <a href="login.html">Login</a>.</p>
+    </div>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

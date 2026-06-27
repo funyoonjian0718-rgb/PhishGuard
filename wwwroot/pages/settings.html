@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Settings</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="settings">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-note">Settings page will later hold alert preferences and AWS notification settings.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+        <div class="page-title"><h1>Settings</h1><p>Demo settings for the local prototype.</p></div>
+        <div class="top-actions"><div class="avatar">DU</div></div>
+      </header>
+
+      <section class="content grid two-col">
+        <div class="panel">
+          <div class="panel-header"><h2>Notification Settings</h2></div>
+          <div class="panel-body grid">
+            <label><input type="checkbox" checked style="width:auto;margin-right:8px" /> Show warning for phishing result</label>
+            <label><input type="checkbox" checked style="width:auto;margin-right:8px" /> Save analysis history</label>
+            <label><input type="checkbox" style="width:auto;margin-right:8px" /> Email alert for high-risk result</label>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h2>Demo Data</h2></div>
+          <div class="panel-body">
+            <p class="help-text">Use this only during testing if you want to reset the local sample data.</p>
+            <button class="btn danger" id="clearDemoData">Reset Demo Data</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

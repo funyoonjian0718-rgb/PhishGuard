@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Reports</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="reports">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-note">Reports page gives assignment-friendly screenshots for analysis summary.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+        <div class="page-title"><h1>Reports</h1><p>Summary of safe, suspicious and phishing results.</p></div>
+        <div class="top-actions"><a href="analyze.html" class="btn primary">New Analysis</a><div class="avatar">DU</div></div>
+      </header>
+
+      <section class="content grid">
+        <div class="grid three-col">
+          <div class="card"><div class="label">Safe Percentage</div><div class="value" id="safePercent">0%</div></div>
+          <div class="card"><div class="label">Suspicious Percentage</div><div class="value" id="suspiciousPercent">0%</div></div>
+          <div class="card"><div class="label">Phishing Percentage</div><div class="value" id="phishingPercent">0%</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h2>Risk Distribution</h2></div>
+          <div class="panel-body grid">
+            <div>
+              <div class="label">Safe</div>
+              <div class="risk-meter"><div class="risk-fill" id="safeBar"></div></div>
+            </div>
+            <div>
+              <div class="label">Suspicious</div>
+              <div class="risk-meter"><div class="risk-fill" id="suspiciousBar"></div></div>
+            </div>
+            <div>
+              <div class="label">Phishing</div>
+              <div class="risk-meter"><div class="risk-fill" id="phishingBar"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h2>Report Explanation</h2></div>
+          <div class="panel-body">
+            <p class="help-text">This page summarizes the classification records saved in the system. In the final AWS version, these results will be retrieved from DynamoDB or another AWS database service instead of browser localStorage.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

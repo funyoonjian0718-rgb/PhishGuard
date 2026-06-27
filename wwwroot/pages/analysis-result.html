@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PhishGuard | Analysis Result</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+
+<body data-page="result">
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div>
+          <div class="brand-title">PhishGuard</div>
+          <div class="brand-subtitle">Email Threat Analysis</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+        <a href="reports.html" data-page="reports">📊 Reports</a>
+        <a href="profile.html" data-page="profile">👤 Profile</a>
+        <a href="settings.html" data-page="settings">⚙️ Settings</a>
+      </nav>
+
+      <div class="sidebar-note">
+        The result explains why the email was classified as Safe, Suspicious, or Phishing.
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="topbar">
+        <button class="btn mobile-menu" data-mobile-menu>☰</button>
+
+        <div class="page-title">
+          <h1>Analysis Result</h1>
+          <p>Risk score and matched phishing detection rules.</p>
+        </div>
+
+        <div class="top-actions">
+          <a href="analyze.html" class="btn primary">Analyze Another</a>
+          <div class="avatar">DU</div>
+        </div>
+      </header>
+
+      <section class="content grid two-col">
+        <!-- Result Summary Panel -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Result Summary</h2>
+            <span id="resultBadge" class="badge suspicious">-</span>
+          </div>
+
+          <div class="panel-body grid">
+            <div class="card" style="box-shadow:none">
+              <div class="label">Classification</div>
+
+              <!-- This ID is important for app.js -->
+              <div class="value" id="riskLevel">-</div>
+
+              <div class="hint">
+                Risk Score:
+                <strong id="riskScore">0/100</strong>
+              </div>
+            </div>
+
+            <div class="risk-meter">
+              <div class="risk-fill" id="riskFill"></div>
+            </div>
+
+            <!-- This ID is important for app.js -->
+            <div>
+              <div class="label">Summary</div>
+              <p id="summary" class="help-text">
+                No analysis summary available yet.
+              </p>
+            </div>
+
+            <div class="grid three-col">
+              <div>
+                <div class="label">Sender</div>
+                <p id="resultSender" class="help-text">-</p>
+              </div>
+
+              <div>
+                <div class="label">Subject</div>
+                <p id="resultSubject" class="help-text">-</p>
+              </div>
+
+              <div>
+                <div class="label">Attachment</div>
+                <p id="resultAttachment" class="help-text">-</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="label">Links</div>
+              <p id="resultLinks" class="help-text">-</p>
+            </div>
+
+            <div>
+              <div class="label">Email Body</div>
+              <p id="resultBody" class="help-text">-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detected Issues Panel -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Detected Issues</h2>
+          </div>
+
+          <div class="panel-body">
+            <!-- This ID is important for app.js -->
+            <ul class="rule-list" id="detectedIssues">
+              <li>No detected issues available yet.</li>
+            </ul>
+
+            <a href="scan-history.html" class="btn" style="margin-top:16px">
+              View History
+            </a>
+          </div>
+        </div>
+
+        <!-- Recommendations Panel -->
+        <div class="panel full-span">
+          <div class="panel-header">
+            <h2>Security Recommendations</h2>
+          </div>
+
+          <div class="panel-body">
+            <!-- This ID is important for app.js -->
+            <ul class="rule-list" id="recommendations">
+              <li>No recommendations available yet.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>
