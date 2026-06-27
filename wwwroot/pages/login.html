@@ -19,15 +19,13 @@
       <h1>Login</h1>
       <div class="alert" id="loginAlert">Demo account: demo@phishguard.com / password123</div>
       <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="demo@phishguard.com" required />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="password123" required />
-        </div>
-        <button class="btn primary full" type="submit">Sign In</button>
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com" required />
+
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Enter your password" required />
+
+        <button type="submit" class="btn primary">Login</button>
       </form>
       <p class="help-text">No account yet? <a href="register.html">Create one</a>. This login is local only for Phase 1.</p>
     </div>

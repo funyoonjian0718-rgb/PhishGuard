@@ -19,19 +19,19 @@
       <h1>Register</h1>
       <div class="alert" id="registerAlert">This is Phase 1 local storage only. Real authentication will be added later.</div>
       <form id="registerForm">
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" placeholder="Your name" required />
-        </div>
-        <div class="form-group">
-          <label for="emailR">Email Address</label>
-          <input type="email" id="emailR" placeholder="you@example.com" required />
-        </div>
-        <div class="form-group">
-          <label for="passwordR">Password</label>
-          <input type="password" id="passwordR" placeholder="Minimum 8 characters" minlength="8" required />
-        </div>
-        <button class="btn primary full" type="submit">Create Account</button>
+        <label>Full Name</label>
+        <input id="fullName" type="text" placeholder="Enter your full name" required />
+
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com" required />
+
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Minimum 8 characters" required />
+
+        <label>Confirm Password</label>
+        <input id="confirmPassword" type="password" placeholder="Confirm password" required />
+
+        <button type="submit" class="btn primary">Create Account</button>
       </form>
       <p class="help-text">Already have an account? <a href="login.html">Login</a>.</p>
     </div>

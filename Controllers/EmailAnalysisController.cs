@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PhishGuard.Models;
 using PhishGuard.Services;
-//backend API endpoint after reveive data from frontend, calls analyssis service and return results
+
 namespace PhishGuard.Controllers
 {
     [ApiController]
@@ -9,14 +9,18 @@ namespace PhishGuard.Controllers
     public class EmailAnalysisController : ControllerBase
     {
         private readonly PhishingAnalysisService _phishingAnalysisService;
+        private readonly EmailHistoryService _emailHistoryService;
 
-        public EmailAnalysisController(PhishingAnalysisService phishingAnalysisService)
+        public EmailAnalysisController(
+            PhishingAnalysisService phishingAnalysisService,
+            EmailHistoryService emailHistoryService)
         {
             _phishingAnalysisService = phishingAnalysisService;
+            _emailHistoryService = emailHistoryService;
         }
 
         [HttpPost("analyze")]
-        public IActionResult Analyze([FromBody] EmailAnalysis email)
+        public async Task<IActionResult> Analyze([FromBody] EmailAnalysis email)
         {
             if (email == null)
             {
@@ -28,7 +32,41 @@ namespace PhishGuard.Controllers
 
             var result = _phishingAnalysisService.AnalyzeEmail(email);
 
+            var savedRecord = await _emailHistoryService.SaveScanAsync(email, result);
+
+            result.ScanId = savedRecord.Id;
+
             return Ok(result);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetHistory()
+        {
+            var history = await _emailHistoryService.GetRecentScansAsync();
+            return Ok(history);
+        }
+
+        [HttpGet("history/{id}")]
+        public async Task<IActionResult> GetHistoryDetails(int id)
+        {
+            var details = await _emailHistoryService.GetScanDetailsAsync(id);
+
+            if (details == null)
+            {
+                return NotFound(new
+                {
+                    message = "Scan record not found."
+                });
+            }
+
+            return Ok(details);
+        }
+
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStats()
+        {
+            var stats = await _emailHistoryService.GetDashboardStatsAsync();
+            return Ok(stats);
         }
     }
 }

@@ -32,19 +32,23 @@
         <div class="panel">
           <div class="panel-header"><h2>Saved Scans</h2></div>
           <div class="panel-body table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Sender</th>
-                  <th>Subject</th>
-                  <th>Result</th>
-                  <th>Score</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="historyTable"></tbody>
-            </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Risk Level</th>
+                <th>Risk Score</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr>
+                <td colspan="6">Loading history...</td>
+              </tr>
+            </tbody>
+          </table>
           </div>
         </div>
       </section>
