@@ -27,6 +27,16 @@ namespace PhishGuard.Models
 
         public string RecommendationsJson { get; set; } = string.Empty;
 
+        public string ScanType { get; set; } = "Manual";
+
+        public string UploadedFileS3Key { get; set; } = string.Empty;
+
+        public bool AlertSent { get; set; } = false;
+
+        public string AlertMessage { get; set; } = string.Empty;
+
+        public string AlertS3ObjectKey { get; set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

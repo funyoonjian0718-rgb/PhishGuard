@@ -1,59 +1,86 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PhishGuard | Scan History</title>
-  <link rel="stylesheet" href="../css/styles.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhishGuard | Scan History</title>
+    <link rel="stylesheet" href="../css/styles.css?v=140" />
 </head>
+
 <body data-page="history">
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
-      <nav class="nav">
-        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
-        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
-        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
-        <a href="reports.html" data-page="reports">📊 Reports</a>
-        <a href="profile.html" data-page="profile">👤 Profile</a>
-        <a href="settings.html" data-page="settings">⚙️ Settings</a>
-      </nav>
-      <div class="sidebar-note">History is stored in browser localStorage for Phase 1. AWS database will replace this later.</div>
-    </aside>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">PG</div>
+                <div>
+                    <div class="brand-title">PhishGuard</div>
+                    <div class="brand-subtitle">Email Threat Analysis</div>
+                </div>
+            </div>
 
-    <main class="main">
-      <header class="topbar">
-        <button class="btn mobile-menu" data-mobile-menu>☰</button>
-        <div class="page-title"><h1>Scan History</h1><p>All saved email analysis results.</p></div>
-        <div class="top-actions"><a href="analyze.html" class="btn primary">New Analysis</a><div class="avatar">DU</div></div>
-      </header>
+            <nav class="nav">
+                <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+                <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+                <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+                <a href="reports.html" data-page="reports">📊 Reports</a>
+                <a href="profile.html" data-page="profile">👤 Profile</a>
+                <a href="settings.html" data-page="settings">⚙️ Settings</a>
+            </nav>
 
-      <section class="content">
-        <div class="panel">
-          <div class="panel-header"><h2>Saved Scans</h2></div>
-          <div class="panel-body table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Sender</th>
-                <th>Subject</th>
-                <th>Risk Level</th>
-                <th>Risk Score</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="historyTableBody">
-              <tr>
-                <td colspan="6">Loading history...</td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-  <script src="../js/app.js"></script>
+            <div class="sidebar-note">
+                Scan history is stored in AWS RDS. Uploaded files and generated alert reports are stored in S3.
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <button class="btn mobile-menu" data-mobile-menu>☰</button>
+
+                <div class="page-title">
+                    <h1>Scan History</h1>
+                    <p>View saved manual, screenshot, and bulk phishing scan records.</p>
+                </div>
+
+                <div class="top-actions">
+                    <a href="analyze.html" class="btn primary">New Analysis</a>
+                    <div class="avatar">DU</div>
+                </div>
+            </header>
+
+            <section class="content">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Saved Scans</h2>
+                    </div>
+
+                    <div class="panel-body table-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Scan Type</th>
+                                    <th>Sender</th>
+                                    <th>Subject</th>
+                                    <th>Risk Level</th>
+                                    <th>Risk Score</th>
+                                    <th>Uploaded S3 Key</th>
+                                    <th>Alert</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="historyTableBody">
+                                <tr>
+                                    <td colspan="9">Loading history...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/app.js?v=140"></script>
 </body>
 </html>

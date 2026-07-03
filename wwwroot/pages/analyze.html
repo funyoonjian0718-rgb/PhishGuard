@@ -1,84 +1,239 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PhishGuard | Analyze Email</title>
-  <link rel="stylesheet" href="../css/styles.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhishGuard | Analyze Email</title>
+    <link rel="stylesheet" href="../css/styles.css?v=120"/>
 </head>
+
 <body data-page="analyze">
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand"><div class="logo">PG</div><div><div class="brand-title">PhishGuard</div><div class="brand-subtitle">Email Threat Analysis</div></div></div>
-      <nav class="nav">
-        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
-        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
-        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
-        <a href="reports.html" data-page="reports">📊 Reports</a>
-        <a href="profile.html" data-page="profile">👤 Profile</a>
-        <a href="settings.html" data-page="settings">⚙️ Settings</a>
-      </nav>
-      <div class="sidebar-note">This page collects email details and runs the local rule-based phishing check.</div>
-    </aside>
+    <div class="app-shell">
 
-    <main class="main">
-      <header class="topbar">
-        <button class="btn mobile-menu" data-mobile-menu>☰</button>
-        <div class="page-title">
-          <h1>Analyze Email</h1>
-          <p>Paste suspicious email information to calculate a risk score.</p>
-        </div>
-        <div class="top-actions"><button class="btn" id="sampleEmailBtn" type="button">Load Sample</button><div class="avatar">DU</div></div>
-      </header>
-
-      <section class="content grid two-col">
-        <div class="panel">
-          <div class="panel-header"><h2>Email Details</h2></div>
-          <div class="panel-body">
-            <form id="analyzeForm">
-              <div class="form-group">
-                <label for="sender">Sender Email</label>
-                <input id="senderEmail" type="email" placeholder="example@domain.com" required />
-              </div>
-              <div class="form-group">
-                <label for="subject">Email Subject</label>
-                <input id="subject" type="text" placeholder="Urgent: Account verification required" required />
-              </div>
-              <div class="form-group">
-                <label for="body">Email Body</label>
-                <textarea id="emailBody" placeholder="Paste the email message here..." required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="links">Links Found in Email</label>
-                <input id="link" type="text" placeholder="https://example.com/login" />
-              </div>
-              <div class="form-group">
-                <label for="attachment">Attachment Name</label>
-                <input id="attachmentName" type="file" placeholder="invoice.pdf / update.zip" />
-              </div>
-              <button class="btn primary" type="submit">Analyze Email</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header"><h2>What the System Checks</h2></div>
-          <div class="panel-body">
-            <p class="help-text">For Phase 1, this is a local rule-based prototype. It checks the visible email content and assigns risk points based on common phishing indicators.</p>
-            <div class="pill-row">
-              <span class="check-pill">Urgent words</span>
-              <span class="check-pill">Password requests</span>
-              <span class="check-pill">Suspicious links</span>
-              <span class="check-pill">HTTP links</span>
-              <span class="check-pill">Free sender domains</span>
-              <span class="check-pill">Risky attachments</span>
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">PG</div>
+                <div>
+                    <div class="brand-title">PhishGuard</div>
+                    <div class="brand-subtitle">Email Threat Analysis</div>
+                </div>
             </div>
-            <div class="alert" style="margin-top:18px">Important: This is for defensive analysis only. Users should verify suspicious emails with the real organization before clicking links or opening attachments.</div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-  <script src="../js/app.js"></script>
+
+            <nav class="nav">
+                <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+                <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+                <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+                <a href="reports.html" data-page="reports">📊 Reports</a>
+                <a href="profile.html" data-page="profile">👤 Profile</a>
+                <a href="settings.html" data-page="settings">⚙️ Settings</a>
+            </nav>
+
+            <div class="sidebar-note">
+                Choose a scan mode to analyze screenshots, email details, or multiple files.
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <button class="btn mobile-menu" data-mobile-menu>☰</button>
+
+                <div class="page-title">
+                    <h1>Analyze Email</h1>
+                    <p>Scan suspicious emails using screenshot upload, manual input, or bulk file checking.</p>
+                </div>
+
+                <div class="top-actions">
+                    <button class="btn" id="sampleEmailBtn" type="button">Load Sample</button>
+                    <div class="avatar">DU</div>
+                </div>
+            </header>
+
+            <section class="content grid two-col">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Email Threat Scanner</h2>
+                    </div>
+
+                    <div class="panel-body">
+
+                        <div class="scan-tabs">
+                            <button class="scan-tab active" type="button" data-scan-tab="screenshot">
+                                🖼️ Screenshot Scan
+                            </button>
+
+                            <button class="scan-tab" type="button" data-scan-tab="manual">
+                                ✍️ Manual Scan
+                            </button>
+
+                            <button class="scan-tab" type="button" data-scan-tab="bulk">
+                                📁 Bulk Scan
+                            </button>
+                        </div>
+
+                        <!-- SCREENSHOT SCAN TAB -->
+                        <div class="scan-panel active" id="screenshotScanPanel">
+                            <div class="scan-mode-header">
+                                <h3>Screenshot-Based Phishing Scan</h3>
+                                <p class="help-text">
+                                    Upload a screenshot of a suspicious email. The system will store the screenshot and prepare it for phishing analysis.
+                                </p>
+                            </div>
+
+                            <form id="screenshotAnalyzeForm">
+                                <div class="form-group">
+                                    <label for="screenshotSenderEmail">Sender Email / Source</label>
+                                    <input id="screenshotSenderEmail" type="text" placeholder="optional sender or source email" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="screenshotLink">Suspicious Link</label>
+                                    <input id="screenshotLink" type="text" placeholder="optional link found in the screenshot" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="screenshotFile">Upload Email Screenshot</label>
+                                    <input id="screenshotFile" type="file" accept=".png,.jpg,.jpeg,.pdf,.tif,.tiff" />
+                                    <small>You can upload screenshot files such as .png, .jpg, .jpeg, .pdf, .tif, or .tiff.</small>
+                                </div>
+
+                                <button id="runScreenshotScanBtn" type="button" class="btn primary">
+                                    Analyze Screenshot
+                                </button>
+                            </form>
+
+                            <div id="screenshotResults" class="bulk-results"></div>
+                        </div>
+
+                        <!-- MANUAL EMAIL SCAN TAB -->
+                        <div class="scan-panel" id="manualScanPanel">
+                            <div class="scan-mode-header">
+                                <h3>Manual Email Scan</h3>
+                                <p class="help-text">
+                                    Enter suspicious email details manually and upload an attachment if available.
+                                </p>
+                            </div>
+
+                            <form id="analyzeForm">
+                                <div class="form-group">
+                                    <label for="senderEmail">Sender Email</label>
+                                    <input id="senderEmail" type="email" placeholder="example@domain.com" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="subject">Email Subject</label>
+                                    <input id="subject" type="text" placeholder="Urgent: Account verification required" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emailBody">Email Body</label>
+                                    <textarea id="emailBody" placeholder="Paste the email message here..." required></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="link">Links Found in Email</label>
+                                    <input id="link" type="text" placeholder="https://example.com/login" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="attachmentFile">Upload Attachment / Email File</label>
+                                    <input id="attachmentFile" type="file" />
+                                    <small>You can upload files such as .zip, .pdf, .png, .jpg, .eml, or .txt.</small>
+                                </div>
+
+                                <button class="btn primary" type="submit">Analyze Email</button>
+                            </form>
+                        </div>
+
+                        <!-- BULK SCAN TAB -->
+                        <div class="scan-panel" id="bulkScanPanel">
+                            <div class="scan-mode-header">
+                                <h3>Bulk Phishing Scan</h3>
+                                <p class="help-text">
+                                    Upload multiple email text files, screenshots, or attachments for batch phishing checking.
+                                </p>
+                            </div>
+
+                            <form id="bulkAnalyzeForm">
+                                <div class="form-group">
+                                    <label for="bulkSenderEmail">Sender Email / Source</label>
+                                    <input id="bulkSenderEmail" type="text" placeholder="optional sender or source email" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="bulkLink">Suspicious Link</label>
+                                    <input id="bulkLink" type="text" placeholder="optional link found in the emails" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="bulkFiles">Upload Multiple Files</label>
+                                    <input id="bulkFiles" type="file" multiple />
+                                    <small>You can upload multiple .txt, .eml, .png, .jpg, .pdf, or .zip files.</small>
+                                </div>
+
+                                <button id="runBulkScanBtn" type="button" class="btn primary">
+                                    Run Bulk Scan
+                                </button>
+                            </form>
+
+                            <div id="bulkResults" class="bulk-results"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>What the System Checks</h2>
+                    </div>
+
+                    <div class="panel-body">
+                        <p class="help-text">
+                            PhishGuard checks email content, links, sender details, uploaded files, and serverless alert status to calculate a phishing risk score.
+                        </p>
+
+                        <div class="pill-row">
+                            <span class="check-pill">AI text analysis</span>
+                            <span class="check-pill">Screenshot upload</span>
+                            <span class="check-pill">Urgent words</span>
+                            <span class="check-pill">Password requests</span>
+                            <span class="check-pill">Suspicious links</span>
+                            <span class="check-pill">HTTP links</span>
+                            <span class="check-pill">Free sender domains</span>
+                            <span class="check-pill">Risky attachments</span>
+                            <span class="check-pill">Bulk checking</span>
+                            <span class="check-pill">Serverless alert</span>
+                        </div>
+
+                        <div class="alert" style="margin-top:18px">
+                            Important: This is for defensive analysis only. Users should verify suspicious emails with the real organization before clicking links or opening attachments.
+                        </div>
+
+                        <div class="scan-guide">
+                            <h3>Scan Mode Guide</h3>
+
+                            <div class="guide-item">
+                                <strong>Screenshot Scan</strong>
+                                <p>Best for users who only have a screenshot of the suspicious email.</p>
+                            </div>
+
+                            <div class="guide-item">
+                                <strong>Manual Scan</strong>
+                                <p>Best when users can copy sender, subject, email body, link, and attachment details.</p>
+                            </div>
+
+                            <div class="guide-item">
+                                <strong>Bulk Scan</strong>
+                                <p>Best for checking multiple email files, screenshots, or attachments at one time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/app.js?v=120"></script>
 </body>
 </html>

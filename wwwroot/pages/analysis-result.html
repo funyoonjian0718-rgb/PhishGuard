@@ -51,65 +51,75 @@
 
       <section class="content grid two-col">
         <!-- Result Summary Panel -->
-        <div class="panel">
-          <div class="panel-header">
-            <h2>Result Summary</h2>
-            <span id="resultBadge" class="badge suspicious">-</span>
+          <div class="panel">
+              <div class="panel-header">
+                  <h2>Result Summary</h2>
+                  <span id="resultBadge" class="badge suspicious">-</span>
+              </div>
+
+              <div>
+                  <div class="label">Serverless Alert Status</div>
+                  <p id="alertStatus" class="help-text">-</p>
+              </div>
+
+              <div>
+                  <div class="label">S3 Alert Report</div>
+                  <p id="alertS3ObjectKey" class="help-text">-</p>
+              </div>
+
+              <div class="panel-body grid">
+                  <div class="card" style="box-shadow:none">
+                      <div class="label">Classification</div>
+
+                      <!-- This ID is important for app.js -->
+                      <div class="value" id="riskLevel">-</div>
+
+                      <div class="hint">
+                          Risk Score:
+                          <strong id="riskScore">0/100</strong>
+                      </div>
+                  </div>
+
+                  <div class="risk-meter">
+                      <div class="risk-fill" id="riskFill"></div>
+                  </div>
+
+                  <!-- This ID is important for app.js -->
+                  <div>
+                      <div class="label">Summary</div>
+                      <p id="summary" class="help-text">
+                          No analysis summary available yet.
+                      </p>
+                  </div>
+
+                  <div class="grid three-col">
+                      <div>
+                          <div class="label">Sender</div>
+                          <p id="resultSender" class="help-text">-</p>
+                      </div>
+
+                      <div>
+                          <div class="label">Subject</div>
+                          <p id="resultSubject" class="help-text">-</p>
+                      </div>
+
+                      <div>
+                          <div class="label">Attachment</div>
+                          <p id="resultAttachment" class="help-text">-</p>
+                      </div>
+                  </div>
+
+                  <div>
+                      <div class="label">Links</div>
+                      <p id="resultLinks" class="help-text">-</p>
+                  </div>
+
+                  <div>
+                      <div class="label">Email Body</div>
+                      <p id="resultBody" class="help-text">-</p>
+                  </div>
+              </div>
           </div>
-
-          <div class="panel-body grid">
-            <div class="card" style="box-shadow:none">
-              <div class="label">Classification</div>
-
-              <!-- This ID is important for app.js -->
-              <div class="value" id="riskLevel">-</div>
-
-              <div class="hint">
-                Risk Score:
-                <strong id="riskScore">0/100</strong>
-              </div>
-            </div>
-
-            <div class="risk-meter">
-              <div class="risk-fill" id="riskFill"></div>
-            </div>
-
-            <!-- This ID is important for app.js -->
-            <div>
-              <div class="label">Summary</div>
-              <p id="summary" class="help-text">
-                No analysis summary available yet.
-              </p>
-            </div>
-
-            <div class="grid three-col">
-              <div>
-                <div class="label">Sender</div>
-                <p id="resultSender" class="help-text">-</p>
-              </div>
-
-              <div>
-                <div class="label">Subject</div>
-                <p id="resultSubject" class="help-text">-</p>
-              </div>
-
-              <div>
-                <div class="label">Attachment</div>
-                <p id="resultAttachment" class="help-text">-</p>
-              </div>
-            </div>
-
-            <div>
-              <div class="label">Links</div>
-              <p id="resultLinks" class="help-text">-</p>
-            </div>
-
-            <div>
-              <div class="label">Email Body</div>
-              <p id="resultBody" class="help-text">-</p>
-            </div>
-          </div>
-        </div>
 
         <!-- Detected Issues Panel -->
         <div class="panel">
@@ -146,6 +156,6 @@
     </main>
   </div>
 
-  <script src="../js/app.js"></script>
+  <script src="../js/app.js?v=20"></script>
 </body>
 </html>

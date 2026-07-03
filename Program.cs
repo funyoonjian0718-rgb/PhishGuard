@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using PhishGuard.Data;
 using PhishGuard.Services;
+using Amazon;
+using Amazon.Textract;
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,17 @@ builder.Services.AddScoped<EmailHistoryService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddHttpClient<ServerlessAlertService>();
 builder.Services.AddScoped<LocalFileStorageService>();
+
+builder.Services.AddSingleton<IAmazonTextract>(
+    new AmazonTextractClient(RegionEndpoint.USEast1)
+);
+
+builder.Services.AddSingleton<IAmazonS3>(
+    new AmazonS3Client(RegionEndpoint.USEast1)
+);
+
+builder.Services.AddScoped<ScreenshotOcrService>();
+builder.Services.AddScoped<S3FileStorageService>();
 
 var app = builder.Build();
 

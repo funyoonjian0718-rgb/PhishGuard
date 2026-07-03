@@ -1,0 +1,96 @@
+Best Hyperparameters from Stronger Tuning:
+{'num_layers': 4, 'l2_value': 0.0, 'units_1': 288, 'activation_1': 'relu', 'batch_norm_1': False, 'dropout_1': 0.2, 'units_2': 96, 'activation_2': 'tanh', 'batch_norm_2': False, 'dropout_2': 0.0, 'optimizer': 'nadam', 'learning_rate': 0.001, 'units_3': 64, 'activation_3': 'relu', 'batch_norm_3': True, 'dropout_3': 0.2, 'units_4': 288, 'activation_4': 'tanh', 'batch_norm_4': True, 'dropout_4': 0.1}
+
+Best Stronger Tuned Model Summary:
+Model: "sequential_1"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ dense_4 (Dense)                      │ (None, 288)                 │           3,456 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_3 (Dropout)                  │ (None, 288)                 │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_5 (Dense)                      │ (None, 96)                  │          27,744 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_4 (Dropout)                  │ (None, 96)                  │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_6 (Dense)                      │ (None, 64)                  │           6,208 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ batch_normalization_1                │ (None, 64)                  │             256 │
+│ (BatchNormalization)                 │                             │                 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_5 (Dropout)                  │ (None, 64)                  │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_7 (Dense)                      │ (None, 288)                 │          18,720 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ batch_normalization_2                │ (None, 288)                 │           1,152 │
+│ (BatchNormalization)                 │                             │                 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_6 (Dropout)                  │ (None, 288)                 │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_8 (Dense)                      │ (None, 1)                   │             289 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 57,825 (225.88 KB)
+ Trainable params: 57,121 (223.13 KB)
+ Non-trainable params: 704 (2.75 KB)
+Epoch 1/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 4s 3ms/step - accuracy: 0.7101 - loss: 0.5854 - val_accuracy: 0.7301 - val_loss: 0.5531 - learning_rate: 0.0010
+Epoch 2/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 3ms/step - accuracy: 0.7236 - loss: 0.5601 - val_accuracy: 0.7325 - val_loss: 0.5481 - learning_rate: 0.0010
+Epoch 3/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7271 - loss: 0.5547 - val_accuracy: 0.7331 - val_loss: 0.5489 - learning_rate: 0.0010
+Epoch 4/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7290 - loss: 0.5513 - val_accuracy: 0.7331 - val_loss: 0.5462 - learning_rate: 0.0010
+Epoch 5/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7301 - loss: 0.5507 - val_accuracy: 0.7329 - val_loss: 0.5472 - learning_rate: 0.0010
+Epoch 6/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7309 - loss: 0.5496 - val_accuracy: 0.7335 - val_loss: 0.5461 - learning_rate: 0.0010
+Epoch 7/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 3ms/step - accuracy: 0.7309 - loss: 0.5489 - val_accuracy: 0.7333 - val_loss: 0.5450 - learning_rate: 0.0010
+Epoch 8/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 3ms/step - accuracy: 0.7310 - loss: 0.5486 - val_accuracy: 0.7307 - val_loss: 0.5457 - learning_rate: 0.0010
+Epoch 9/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 3ms/step - accuracy: 0.7324 - loss: 0.5478 - val_accuracy: 0.7319 - val_loss: 0.5455 - learning_rate: 0.0010
+Epoch 10/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 3ms/step - accuracy: 0.7316 - loss: 0.5479 - val_accuracy: 0.7328 - val_loss: 0.5453 - learning_rate: 0.0010
+Epoch 11/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7314 - loss: 0.5477 - val_accuracy: 0.7319 - val_loss: 0.5461 - learning_rate: 0.0010
+Epoch 12/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7330 - loss: 0.5452 - val_accuracy: 0.7334 - val_loss: 0.5440 - learning_rate: 5.0000e-04
+Epoch 13/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7327 - loss: 0.5447 - val_accuracy: 0.7333 - val_loss: 0.5435 - learning_rate: 5.0000e-04
+Epoch 14/80
+723/723 ━━━━━━━━━━━━━━━━━━━━ 2s 2ms/step - accuracy: 0.7340 - loss: 0.5438 - val_accuracy: 0.7324 - val_loss: 0.5439 - learning_rate: 5.0000e-04
+
+Stronger Tuned Model Test Loss: 0.545674741268158
+Stronger Tuned Model Test Accuracy: 0.7345483899116516
+
+Stronger Tuned Model - First 5 Epochs
+       accuracy      loss  val_accuracy  val_loss  learning_rate
+Epoch
+1      0.710136  0.585434      0.730067  0.553133          0.001
+2      0.723602  0.560149      0.732517  0.548074          0.001
+3      0.727104  0.554664      0.733129  0.548903          0.001
+4      0.728963  0.551270      0.733129  0.546157          0.001
+5      0.730130  0.550718      0.732884  0.547183          0.001
+
+Stronger Tuned Model - Last 5 Epochs
+       accuracy      loss  val_accuracy  val_loss  learning_rate
+Epoch
+10     0.731578  0.547858      0.732762  0.545318         0.0010
+11     0.731384  0.547732      0.731904  0.546061         0.0010
+12     0.732962  0.545175      0.733374  0.544030         0.0005
+13     0.732724  0.544659      0.733252  0.543466         0.0005
+14     0.734042  0.543840      0.732394  0.543866         0.0005
+
+All Model Comparison After Stronger Tuning:
+                                    Model  Test Loss  Test Accuracy
+0                      Model 1: Basic ANN   0.543486       0.732123
+1          Model 2: Deeper Neural Network   0.544697       0.731903
+2  Model 4: Stronger Tuned Neural Network   0.545675       0.734548
+
+Best Performing Model After Stronger Tuning:
+Model            Model 4: Stronger Tuned Neural Network
+Test Loss                                      0.545675
+Test Accuracy                                  0.734548
+Name: 2, dtype: object

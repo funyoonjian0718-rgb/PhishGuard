@@ -1,131 +1,156 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PhishGuard | Scan Details</title>
-  <link rel="stylesheet" href="../css/styles.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhishGuard | Scan Details</title>
+    <link rel="stylesheet" href="../css/styles.css?v=140" />
 </head>
 
 <body data-page="details">
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">PG</div>
-        <div>
-          <div class="brand-title">PhishGuard</div>
-          <div class="brand-subtitle">Email Threat Analysis</div>
-        </div>
-      </div>
-
-      <nav class="nav">
-        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
-        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
-        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
-        <a href="reports.html" data-page="reports">📊 Reports</a>
-        <a href="profile.html" data-page="profile">👤 Profile</a>
-        <a href="settings.html" data-page="settings">⚙️ Settings</a>
-      </nav>
-
-      <div class="sidebar-note">
-        Detailed view for one selected email scan record from the backend database.
-      </div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <button class="btn mobile-menu" data-mobile-menu>☰</button>
-
-        <div class="page-title">
-          <h1>Scan Details</h1>
-          <p>Full details of the selected phishing email analysis record.</p>
-        </div>
-
-        <div class="top-actions">
-          <a href="scan-history.html" class="btn">Back to History</a>
-          <div class="avatar">DU</div>
-        </div>
-      </header>
-
-      <section class="content grid two-col">
-        <div class="panel">
-          <div class="panel-header">
-            <h2>Selected Email</h2>
-            <span id="detailRiskLevel" class="badge suspicious">-</span>
-          </div>
-
-          <div class="panel-body grid">
-            <div>
-              <div class="label">Scan ID</div>
-              <p class="help-text" id="detailId">-</p>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">PG</div>
+                <div>
+                    <div class="brand-title">PhishGuard</div>
+                    <div class="brand-subtitle">Email Threat Analysis</div>
+                </div>
             </div>
 
-            <div>
-              <div class="label">Risk Score</div>
-              <p class="help-text">
-                <strong id="detailRiskScore">0/100</strong>
-              </p>
+            <nav class="nav">
+                <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+                <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+                <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+                <a href="reports.html" data-page="reports">📊 Reports</a>
+                <a href="profile.html" data-page="profile">👤 Profile</a>
+                <a href="settings.html" data-page="settings">⚙️ Settings</a>
+            </nav>
+
+            <div class="sidebar-note">
+                Detailed scan record from AWS RDS with related S3 object keys.
             </div>
+        </aside>
 
-            <div>
-              <div class="label">Summary</div>
-              <p class="help-text" id="detailSummary">-</p>
-            </div>
+        <main class="main">
+            <header class="topbar">
+                <button class="btn mobile-menu" data-mobile-menu>☰</button>
 
-            <div>
-              <div class="label">Sender</div>
-              <p class="help-text" id="detailSender">-</p>
-            </div>
+                <div class="page-title">
+                    <h1>Scan Details</h1>
+                    <p>Full details of the selected phishing email analysis record.</p>
+                </div>
 
-            <div>
-              <div class="label">Subject</div>
-              <p class="help-text" id="detailSubject">-</p>
-            </div>
+                <div class="top-actions">
+                    <a href="scan-history.html" class="btn">Back to History</a>
+                    <div class="avatar">DU</div>
+                </div>
+            </header>
 
-            <div>
-              <div class="label">Email Body</div>
-              <p class="help-text" id="detailBody">-</p>
-            </div>
+            <section class="content grid two-col">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Selected Scan</h2>
+                        <span id="detailRiskLevel" class="badge suspicious">-</span>
+                    </div>
 
-            <div>
-              <div class="label">Link</div>
-              <p class="help-text" id="detailLink">-</p>
-            </div>
+                    <div class="panel-body grid">
+                        <div>
+                            <div class="label">Scan ID</div>
+                            <p class="help-text" id="detailId">-</p>
+                        </div>
 
-            <div>
-              <div class="label">Attachment</div>
-              <p class="help-text" id="detailAttachment">-</p>
-            </div>
-          </div>
-        </div>
+                        <div>
+                            <div class="label">Scan Type</div>
+                            <p class="help-text" id="detailScanType">-</p>
+                        </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <h2>Detected Issues</h2>
-          </div>
+                        <div>
+                            <div class="label">Risk Score</div>
+                            <p class="help-text">
+                                <strong id="detailRiskScore">0/100</strong>
+                            </p>
+                        </div>
 
-          <div class="panel-body">
-            <ul class="rule-list" id="detailIssues">
-              <li>Loading detected issues...</li>
-            </ul>
-          </div>
-        </div>
+                        <div>
+                            <div class="label">Alert Sent</div>
+                            <p class="help-text" id="detailAlertSent">-</p>
+                        </div>
 
-        <div class="panel full-span">
-          <div class="panel-header">
-            <h2>Security Recommendations</h2>
-          </div>
+                        <div>
+                            <div class="label">Summary</div>
+                            <p class="help-text" id="detailSummary">-</p>
+                        </div>
 
-          <div class="panel-body">
-            <ul class="rule-list" id="detailRecommendations">
-              <li>Loading recommendations...</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+                        <div>
+                            <div class="label">Sender</div>
+                            <p class="help-text" id="detailSender">-</p>
+                        </div>
 
-  <script src="../js/app.js"></script>
+                        <div>
+                            <div class="label">Subject</div>
+                            <p class="help-text" id="detailSubject">-</p>
+                        </div>
+
+                        <div>
+                            <div class="label">Link</div>
+                            <p class="help-text" id="detailLink">-</p>
+                        </div>
+
+                        <div>
+                            <div class="label">Attachment / Uploaded File</div>
+                            <p class="help-text" id="detailAttachment">-</p>
+                        </div>
+
+                        <div>
+                            <div class="label">Uploaded File S3 Key</div>
+                            <p class="help-text" id="detailUploadedFileS3Key">-</p>
+                        </div>
+
+                        <div>
+                            <div class="label">Alert Message</div>
+                            <p class="help-text" id="detailAlertMessage">-</p>
+                        </div>
+
+                        <div>
+                            <div class="label">Alert S3 Object Key</div>
+                            <p class="help-text" id="detailAlertS3ObjectKey">-</p>
+                        </div>
+
+                        <div class="full-span">
+                            <div class="label">Email Body / Extracted Text</div>
+                            <p class="help-text" id="detailBody">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Detected Issues</h2>
+                    </div>
+
+                    <div class="panel-body">
+                        <ul class="rule-list" id="detailIssues">
+                            <li>Loading detected issues...</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="panel full-span">
+                    <div class="panel-header">
+                        <h2>Security Recommendations</h2>
+                    </div>
+
+                    <div class="panel-body">
+                        <ul class="rule-list" id="detailRecommendations">
+                            <li>Loading recommendations...</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/app.js?v=140"></script>
 </body>
 </html>

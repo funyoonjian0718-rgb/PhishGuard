@@ -1,142 +1,180 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PhishGuard | Reports</title>
-  <link rel="stylesheet" href="../css/styles.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhishGuard | Reports</title>
+    <link rel="stylesheet" href="../css/styles.css?v=170" />
 </head>
 
 <body data-page="reports">
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">PG</div>
-        <div>
-          <div class="brand-title">PhishGuard</div>
-          <div class="brand-subtitle">Email Threat Analysis</div>
-        </div>
-      </div>
-
-      <nav class="nav">
-        <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
-        <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
-        <a href="scan-history.html" data-page="history">🕘 Scan History</a>
-        <a href="reports.html" data-page="reports">📊 Reports</a>
-        <a href="profile.html" data-page="profile">👤 Profile</a>
-        <a href="settings.html" data-page="settings">⚙️ Settings</a>
-      </nav>
-
-      <div class="sidebar-note">
-        Reports summarize scan records stored in the backend database.
-      </div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <button class="btn mobile-menu" data-mobile-menu>☰</button>
-
-        <div class="page-title">
-          <h1>Reports</h1>
-          <p>Summary of safe, suspicious and phishing results.</p>
-        </div>
-
-        <div class="top-actions">
-          <a href="analyze.html" class="btn primary">New Analysis</a>
-          <div class="avatar">DU</div>
-        </div>
-      </header>
-
-      <section class="content grid">
-        <div class="grid cards">
-          <div class="card">
-            <div class="label">Total Scans</div>
-            <div class="value" id="statTotal">0</div>
-            <div class="hint">All saved analysis records</div>
-          </div>
-
-          <div class="card">
-            <div class="label">Safe</div>
-            <div class="value" id="statSafe">0</div>
-            <div class="hint">Low-risk messages</div>
-          </div>
-
-          <div class="card">
-            <div class="label">Suspicious</div>
-            <div class="value" id="statSuspicious">0</div>
-            <div class="hint">Requires user verification</div>
-          </div>
-
-          <div class="card">
-            <div class="label">Phishing</div>
-            <div class="value" id="statPhishing">0</div>
-            <div class="hint">High-risk messages</div>
-          </div>
-        </div>
-
-        <div class="grid three-col">
-          <div class="card">
-            <div class="label">Safe Percentage</div>
-            <div class="value" id="safePercent">0%</div>
-          </div>
-
-          <div class="card">
-            <div class="label">Suspicious Percentage</div>
-            <div class="value" id="suspiciousPercent">0%</div>
-          </div>
-
-          <div class="card">
-            <div class="label">Phishing Percentage</div>
-            <div class="value" id="phishingPercent">0%</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <h2>Risk Distribution</h2>
-          </div>
-
-          <div class="panel-body grid">
-            <div>
-              <div class="label">Safe</div>
-              <div class="risk-meter">
-                <div class="risk-fill" id="safeBar"></div>
-              </div>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">PG</div>
+                <div>
+                    <div class="brand-title">PhishGuard</div>
+                    <div class="brand-subtitle">Email Threat Analysis</div>
+                </div>
             </div>
 
-            <div>
-              <div class="label">Suspicious</div>
-              <div class="risk-meter">
-                <div class="risk-fill" id="suspiciousBar"></div>
-              </div>
+            <nav class="nav">
+                <a href="index.html" data-page="dashboard">🏠 Dashboard</a>
+                <a href="analyze.html" data-page="analyze">🔍 Analyze Email</a>
+                <a href="scan-history.html" data-page="history">🕘 Scan History</a>
+                <a href="reports.html" data-page="reports">📊 Reports</a>
+                <a href="profile.html" data-page="profile">👤 Profile</a>
+                <a href="settings.html" data-page="settings">⚙️ Settings</a>
+            </nav>
+
+            <div class="sidebar-note">
+                Reports summarize RDS scan records, S3 file uploads, and serverless phishing alerts.
             </div>
+        </aside>
 
-            <div>
-              <div class="label">Phishing</div>
-              <div class="risk-meter">
-                <div class="risk-fill" id="phishingBar"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <main class="main">
+            <header class="topbar">
+                <button class="btn mobile-menu" data-mobile-menu>☰</button>
 
-        <div class="panel">
-          <div class="panel-header">
-            <h2>Report Explanation</h2>
-          </div>
+                <div class="page-title">
+                    <h1>Reports</h1>
+                    <p>Summary of phishing detection results and cloud service activity.</p>
+                </div>
 
-          <div class="panel-body">
-            <p class="help-text">
-              This page summarizes classification records saved in the backend database.
-              During local development, the records are stored in local MySQL. In the final cloud version,
-              the same database structure will be migrated to Amazon RDS MySQL.
-            </p>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+                <div class="top-actions">
+                    <a href="analyze.html" class="btn primary">New Analysis</a>
+                    <div class="avatar">DU</div>
+                </div>
+            </header>
 
-  <script src="../js/app.js"></script>
+            <section class="content grid">
+
+                <div class="grid cards">
+                    <div class="card">
+                        <div class="label">Total Scans</div>
+                        <div class="value" id="reportTotalScans">0</div>
+                        <div class="hint">All saved scan records in RDS</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="label">Safe</div>
+                        <div class="value" id="reportSafeScans">0</div>
+                        <div class="hint">Low-risk emails</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="label">Suspicious</div>
+                        <div class="value" id="reportSuspiciousScans">0</div>
+                        <div class="hint">Needs further checking</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="label">Phishing</div>
+                        <div class="value" id="reportPhishingScans">0</div>
+                        <div class="hint">High-risk emails</div>
+                    </div>
+                </div>
+
+                <div class="grid cards">
+                    <div class="card">
+                        <div class="label">Manual Scans</div>
+                        <div class="value" id="reportManualScans">0</div>
+                        <div class="hint">Typed email details</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="label">Manual Uploads</div>
+                        <div class="value" id="reportManualUploadScans">0</div>
+                        <div class="hint">Manual scan with uploaded file</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="label">Screenshot Scans</div>
+                        <div class="value" id="reportScreenshotScans">0</div>
+                        <div class="hint">Screenshot-based checking</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="label">Bulk Scans</div>
+                        <div class="value" id="reportBulkScans">0</div>
+                        <div class="hint">Multiple files checked together</div>
+                    </div>
+                </div>
+
+                <div class="grid two-col">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Risk Distribution</h2>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="report-row">
+                                <div class="label">Safe Emails</div>
+                                <div class="value small-value" id="safePercent">0%</div>
+                                <div class="progress">
+                                    <div class="progress-fill safe-fill" id="safeBar" style="width:0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="report-row">
+                                <div class="label">Suspicious Emails</div>
+                                <div class="value small-value" id="suspiciousPercent">0%</div>
+                                <div class="progress">
+                                    <div class="progress-fill suspicious-fill" id="suspiciousBar" style="width:0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="report-row">
+                                <div class="label">Phishing Emails</div>
+                                <div class="value small-value" id="phishingPercent">0%</div>
+                                <div class="progress">
+                                    <div class="progress-fill danger-fill" id="phishingBar" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Cloud Service Usage</h2>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="card" style="box-shadow:none">
+                                <div class="label">Uploaded Files Saved to S3</div>
+                                <div class="value" id="reportUploadedFileCount">0</div>
+                                <p class="help-text">
+                                    Uploaded screenshots, attachments, and bulk files are saved in Amazon S3. RDS stores the related S3 object key.
+                                </p>
+                            </div>
+
+                            <div class="card" style="box-shadow:none;margin-top:16px">
+                                <div class="label">Serverless Alerts Sent</div>
+                                <div class="value" id="reportAlertSentCount">0</div>
+                                <p class="help-text">
+                                    Phishing results trigger API Gateway and Lambda to generate alert JSON reports in S3.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Report Summary</h2>
+                    </div>
+
+                    <div class="panel-body">
+                        <p class="help-text" id="reportSummaryText">
+                            Loading report summary...
+                        </p>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/app.js?v=170"></script>
 </body>
 </html>

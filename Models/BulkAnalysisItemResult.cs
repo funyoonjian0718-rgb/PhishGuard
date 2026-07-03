@@ -1,8 +1,12 @@
-namespace PhishGuard.Models
+﻿namespace PhishGuard.Models
 {
-    public class AnalysisResult
+    public class BulkAnalysisItemResult
     {
         public int ScanId { get; set; }
+
+        public string OriginalFileName { get; set; } = string.Empty;
+
+        public string StoredFileName { get; set; } = string.Empty;
 
         public int RiskScore { get; set; }
 
@@ -14,11 +18,9 @@ namespace PhishGuard.Models
 
         public List<string> Recommendations { get; set; } = new();
 
-        public DateTime AnalyzedAt { get; set; } = DateTime.Now;
+        public bool AlertSent { get; set; }
 
-        public bool AlertSent { get; set; } = false;
-
-        public string AlertMessage { get; set; } = "No serverless alert was triggered.";
+        public string AlertMessage { get; set; } = string.Empty;
 
         public string AlertS3ObjectKey { get; set; } = string.Empty;
     }

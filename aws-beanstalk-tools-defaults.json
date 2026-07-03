@@ -1,6 +1,6 @@
 {
   "region": "us-east-1",
-  "configuration": "Release",
+  "configuration": "Debug",
   "framework": "net8.0",
   "self-contained": true,
   "application": "PhishGuard",

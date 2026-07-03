@@ -1,20 +1,23 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using PhishGuard.Data;
 using PhishGuard.Models;
+using System.Text.Json;
 
 namespace PhishGuard.Services
 {
     public class EmailHistoryService
     {
-        private readonly PhishGuardDbContext _dbContext;
+        private readonly PhishGuardDbContext _context;
 
-        public EmailHistoryService(PhishGuardDbContext dbContext)
+        public EmailHistoryService(PhishGuardDbContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
 
-        public async Task<EmailScanRecord> SaveScanAsync(EmailAnalysis email, AnalysisResult result)
+        public async Task<EmailScanRecord> SaveScanAsync(
+            EmailAnalysis email,
+            AnalysisResult result,
+            string scanType = "Manual")
         {
             var record = new EmailScanRecord
             {
@@ -23,86 +26,102 @@ namespace PhishGuard.Services
                 EmailBody = email.EmailBody,
                 Link = email.Link,
                 AttachmentName = email.AttachmentName,
+
                 RiskScore = result.RiskScore,
                 RiskLevel = result.RiskLevel,
                 Summary = result.Summary,
                 DetectedIssuesJson = JsonSerializer.Serialize(result.DetectedIssues),
                 RecommendationsJson = JsonSerializer.Serialize(result.Recommendations),
+
+                ScanType = scanType,
+                UploadedFileS3Key = email.AttachmentName,
+
+                AlertSent = result.AlertSent,
+                AlertMessage = result.AlertMessage,
+                AlertS3ObjectKey = result.AlertS3ObjectKey,
+
                 CreatedAt = DateTime.Now
             };
 
-            _dbContext.EmailScanRecords.Add(record);
-            await _dbContext.SaveChangesAsync();
+            _context.EmailScanRecords.Add(record);
+            await _context.SaveChangesAsync();
 
             return record;
         }
 
-        public async Task<List<object>> GetRecentScansAsync()
+        public async Task UpdateAlertInfoAsync(int scanId, AnalysisResult result)
         {
-            var records = await _dbContext.EmailScanRecords
-                .OrderByDescending(x => x.CreatedAt)
-                .Take(50)
-                .ToListAsync();
-
-            return records.Select(x => new
-            {
-                x.Id,
-                x.SenderEmail,
-                x.Subject,
-                x.Link,
-                x.AttachmentName,
-                x.RiskScore,
-                x.RiskLevel,
-                x.Summary,
-                x.CreatedAt
-            }).Cast<object>().ToList();
-        }
-
-        public async Task<object?> GetScanDetailsAsync(int id)
-        {
-            var record = await _dbContext.EmailScanRecords.FindAsync(id);
+            var record = await _context.EmailScanRecords.FindAsync(scanId);
 
             if (record == null)
             {
-                return null;
+                return;
             }
 
-            var detectedIssues = JsonSerializer.Deserialize<List<string>>(record.DetectedIssuesJson)
-                ?? new List<string>();
+            record.AlertSent = result.AlertSent;
+            record.AlertMessage = result.AlertMessage;
+            record.AlertS3ObjectKey = result.AlertS3ObjectKey;
 
-            var recommendations = JsonSerializer.Deserialize<List<string>>(record.RecommendationsJson)
-                ?? new List<string>();
+            await _context.SaveChangesAsync();
+        }
 
-            return new
-            {
-                record.Id,
-                record.SenderEmail,
-                record.Subject,
-                record.EmailBody,
-                record.Link,
-                record.AttachmentName,
-                record.RiskScore,
-                record.RiskLevel,
-                record.Summary,
-                DetectedIssues = detectedIssues,
-                Recommendations = recommendations,
-                record.CreatedAt
-            };
+        public async Task<List<EmailScanRecord>> GetRecentScansAsync()
+        {
+            return await _context.EmailScanRecords
+                .OrderByDescending(record => record.CreatedAt)
+                .Take(30)
+                .ToListAsync();
+        }
+
+        public async Task<EmailScanRecord?> GetScanDetailsAsync(int id)
+        {
+            return await _context.EmailScanRecords
+                .FirstOrDefaultAsync(record => record.Id == id);
         }
 
         public async Task<object> GetDashboardStatsAsync()
         {
-            int total = await _dbContext.EmailScanRecords.CountAsync();
-            int safe = await _dbContext.EmailScanRecords.CountAsync(x => x.RiskLevel == "Safe");
-            int suspicious = await _dbContext.EmailScanRecords.CountAsync(x => x.RiskLevel == "Suspicious");
-            int phishing = await _dbContext.EmailScanRecords.CountAsync(x => x.RiskLevel == "Phishing");
+            int totalScans = await _context.EmailScanRecords.CountAsync();
+
+            int safeScans = await _context.EmailScanRecords
+                .CountAsync(record => record.RiskLevel == "Safe");
+
+            int suspiciousScans = await _context.EmailScanRecords
+                .CountAsync(record => record.RiskLevel == "Suspicious");
+
+            int phishingScans = await _context.EmailScanRecords
+                .CountAsync(record => record.RiskLevel == "Phishing");
+
+            int manualScans = await _context.EmailScanRecords
+                .CountAsync(record => record.ScanType == "Manual");
+
+            int manualUploadScans = await _context.EmailScanRecords
+                .CountAsync(record => record.ScanType == "Manual Upload");
+
+            int screenshotScans = await _context.EmailScanRecords
+                .CountAsync(record => record.ScanType == "Screenshot");
+
+            int bulkScans = await _context.EmailScanRecords
+                .CountAsync(record => record.ScanType == "Bulk");
+
+            int alertSentCount = await _context.EmailScanRecords
+                .CountAsync(record => record.AlertSent == true);
+
+            int uploadedFileCount = await _context.EmailScanRecords
+                .CountAsync(record => record.UploadedFileS3Key != "");
 
             return new
             {
-                Total = total,
-                Safe = safe,
-                Suspicious = suspicious,
-                Phishing = phishing
+                totalScans,
+                safeScans,
+                suspiciousScans,
+                phishingScans,
+                manualScans,
+                manualUploadScans,
+                screenshotScans,
+                bulkScans,
+                alertSentCount,
+                uploadedFileCount
             };
         }
     }
