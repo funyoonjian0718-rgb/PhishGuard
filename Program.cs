@@ -9,19 +9,27 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<PhishGuardDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(
+        connectionString,
+        new MySqlServerVersion(new Version(8, 4, 8)),
+        mySqlOptions =>
+        {
+            mySqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null
+            );
+        }
+    )
+);
 
 builder.Services.AddSingleton<PhishingAnalysisService>();
 builder.Services.AddScoped<EmailHistoryService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddHttpClient<ServerlessAlertService>();
+builder.Services.AddScoped<LocalFileStorageService>();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<PhishGuardDbContext>();
-    dbContext.Database.EnsureCreated();
-}
 
 if (!app.Environment.IsDevelopment())
 {

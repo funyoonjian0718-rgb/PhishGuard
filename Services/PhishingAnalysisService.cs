@@ -1,216 +1,452 @@
-using System.Text.RegularExpressions;
+using Microsoft.ML;
+using Microsoft.ML.Data;
 using PhishGuard.Models;
+using System.Text.RegularExpressions;
 
-namespace PhishGuard.Services  //checks the sender, subject, emailbody, link and attatchment 
+namespace PhishGuard.Services
 {
     public class PhishingAnalysisService
     {
+        private readonly MLContext _mlContext;
+        private readonly PredictionEngine<PhishingTrainingData, PhishingPrediction> _predictionEngine;
+
+        public PhishingAnalysisService()
+        {
+            _mlContext = new MLContext(seed: 1);
+
+            var trainingData = GetTrainingData();
+
+            var dataView = _mlContext.Data.LoadFromEnumerable(trainingData);
+
+            var pipeline = _mlContext.Transforms.Text.FeaturizeText(
+                    outputColumnName: "Features",
+                    inputColumnName: nameof(PhishingTrainingData.Text)
+                )
+                .Append(_mlContext.BinaryClassification.Trainers.LbfgsLogisticRegression(
+                    labelColumnName: nameof(PhishingTrainingData.Label),
+                    featureColumnName: "Features"
+                ));
+
+            var model = pipeline.Fit(dataView);
+
+            _predictionEngine = _mlContext.Model.CreatePredictionEngine<PhishingTrainingData, PhishingPrediction>(model);
+        }
+
         public AnalysisResult AnalyzeEmail(EmailAnalysis email)
         {
-            int score = 0;
-            List<string> issues = new List<string>();
-            List<string> recommendations = new List<string>();
+            var detectedIssues = new List<string>();
+            var recommendations = new List<string>();
 
-            string sender = email.SenderEmail.ToLower();
-            string subject = email.Subject.ToLower();
-            string body = email.EmailBody.ToLower();
-            string link = email.Link.ToLower();
-            string attachment = email.AttachmentName.ToLower();
+            string combinedText = BuildCombinedText(email);
 
-            CheckSender(sender, ref score, issues);
-            CheckSubject(subject, ref score, issues);
-            CheckBody(body, ref score, issues);
-            CheckLink(link, ref score, issues);
-            CheckAttachment(attachment, ref score, issues);
-
-            if (score > 100)
+            var prediction = _predictionEngine.Predict(new PhishingTrainingData
             {
-                score = 100;
-            }
+                Text = combinedText
+            });
 
-            string riskLevel = GetRiskLevel(score);
-            string summary = GenerateSummary(riskLevel, score);
+            int aiScore = Convert.ToInt32(prediction.Probability * 65);
+            int ruleScore = CalculateRuleScore(email, detectedIssues);
 
-            recommendations.Add("Do not click suspicious links before verifying the sender.");
-            recommendations.Add("Check the sender domain carefully before replying.");
-            recommendations.Add("Do not share passwords, OTP codes, or banking details through email.");
-            recommendations.Add("Contact the official company through its verified website if unsure.");
+            int finalScore = Math.Min(100, aiScore + ruleScore);
+
+            string riskLevel = GetRiskLevel(finalScore);
+
+            AddRecommendations(riskLevel, detectedIssues, recommendations);
+
+            string summary = GenerateSummary(riskLevel, finalScore, prediction.Probability, detectedIssues);
 
             return new AnalysisResult
             {
-                RiskScore = score,
+                RiskScore = finalScore,
                 RiskLevel = riskLevel,
                 Summary = summary,
-                DetectedIssues = issues,
+                DetectedIssues = detectedIssues,
                 Recommendations = recommendations,
                 AnalyzedAt = DateTime.Now
             };
         }
 
-        private void CheckSender(string sender, ref int score, List<string> issues)
+        private string BuildCombinedText(EmailAnalysis email)
         {
-            if (string.IsNullOrWhiteSpace(sender))
-            {
-                score += 10;
-                issues.Add("Sender email is missing.");
-                return;
-            }
-
-            string[] freeDomains = { "gmail.com", "yahoo.com", "hotmail.com", "outlook.com" };
-
-            foreach (string domain in freeDomains)
-            {
-                if (sender.EndsWith(domain))
-                {
-                    score += 10;
-                    issues.Add("Sender uses a free email domain, which may be suspicious for official business emails.");
-                    break;
-                }
-            }
-
-            if (sender.Contains("support") && sender.Contains("gmail.com"))
-            {
-                score += 15;
-                issues.Add("Sender pretends to be support but uses a free email account.");
-            }
-
-            if (sender.Contains("secure") || sender.Contains("verify") || sender.Contains("account"))
-            {
-                score += 10;
-                issues.Add("Sender email contains suspicious security-related wording.");
-            }
+            return $@"
+                Sender: {email.SenderEmail}
+                Subject: {email.Subject}
+                Body: {email.EmailBody}
+                Link: {email.Link}
+                Attachment: {email.AttachmentName}
+            ";
         }
 
-        private void CheckSubject(string subject, ref int score, List<string> issues)
+        private int CalculateRuleScore(EmailAnalysis email, List<string> detectedIssues)
         {
-            string[] suspiciousWords =
-            {
-                "urgent", "verify now", "account suspended", "password expired",
-                "security alert", "limited time", "immediate action",
-                "payment failed", "confirm your account"
-            };
+            int score = 0;
 
-            foreach (string word in suspiciousWords)
-            {
-                if (subject.Contains(word))
-                {
-                    score += 15;
-                    issues.Add($"Subject contains suspicious phrase: '{word}'.");
-                }
-            }
-        }
+            string sender = email.SenderEmail?.ToLower() ?? "";
+            string subject = email.Subject?.ToLower() ?? "";
+            string body = email.EmailBody?.ToLower() ?? "";
+            string link = email.Link?.ToLower() ?? "";
+            string attachment = email.AttachmentName?.ToLower() ?? "";
 
-        private void CheckBody(string body, ref int score, List<string> issues)
-        {
-            string[] phishingPhrases =
-            {
-                "click here", "verify your account", "login immediately",
-                "your account will be suspended", "enter your password",
-                "confirm your identity", "update your payment",
-                "bank account", "otp", "one time password"
-            };
+            string allText = $"{sender} {subject} {body} {link} {attachment}";
 
-            foreach (string phrase in phishingPhrases)
-            {
-                if (body.Contains(phrase))
-                {
-                    score += 12;
-                    issues.Add($"Email body contains phishing-related phrase: '{phrase}'.");
-                }
-            }
-
-            if (body.Contains("http://"))
-            {
-                score += 10;
-                issues.Add("Email contains a non-secure HTTP link.");
-            }
-
-            if (body.Contains("password") && body.Contains("account"))
+            if (IsSuspiciousSender(sender))
             {
                 score += 15;
-                issues.Add("Email asks about account/password information.");
-            }
-        }
-
-        private void CheckLink(string link, ref int score, List<string> issues)
-        {
-            if (string.IsNullOrWhiteSpace(link))
-            {
-                return;
+                detectedIssues.Add("Suspicious sender email address detected.");
             }
 
-            if (link.StartsWith("http://"))
+            if (ContainsUrgentLanguage(allText))
             {
                 score += 15;
-                issues.Add("The link uses HTTP instead of HTTPS.");
+                detectedIssues.Add("Urgent or threatening language detected.");
             }
 
-            if (link.Contains("bit.ly") || link.Contains("tinyurl") || link.Contains("t.co"))
+            if (ContainsCredentialRequest(allText))
             {
                 score += 20;
-                issues.Add("The link uses a shortened URL, which can hide the real destination.");
+                detectedIssues.Add("The email requests sensitive information such as password, OTP, login, or banking details.");
             }
 
-            if (Regex.IsMatch(link, @"\d{1,3}(\.\d{1,3}){3}"))
-            {
-                score += 25;
-                issues.Add("The link contains an IP address instead of a normal domain.");
-            }
-
-            if (link.Contains("login") || link.Contains("verify") || link.Contains("secure"))
+            if (ContainsFinancialOrAccountWarning(allText))
             {
                 score += 10;
-                issues.Add("The link contains suspicious login or verification wording.");
+                detectedIssues.Add("The email mentions account suspension, payment, verification, or financial action.");
             }
+
+            if (IsSuspiciousLink(link))
+            {
+                score += 20;
+                detectedIssues.Add("Suspicious or shortened link detected.");
+            }
+
+            if (IsRiskyAttachment(attachment))
+            {
+                score += 15;
+                detectedIssues.Add("Risky attachment type detected.");
+            }
+
+            if (ContainsRewardOrPrizeLanguage(allText))
+            {
+                score += 10;
+                detectedIssues.Add("Reward, prize, or unrealistic offer language detected.");
+            }
+
+            if (detectedIssues.Count == 0)
+            {
+                detectedIssues.Add("No major phishing indicators were detected.");
+            }
+
+            return Math.Min(score, 70);
         }
 
-        private void CheckAttachment(string attachment, ref int score, List<string> issues)
+        private bool IsSuspiciousSender(string sender)
+        {
+            if (string.IsNullOrWhiteSpace(sender))
+                return false;
+
+            bool usesFreeEmailForSupport =
+                sender.Contains("support") &&
+                (sender.Contains("@gmail.com") ||
+                 sender.Contains("@yahoo.com") ||
+                 sender.Contains("@hotmail.com") ||
+                 sender.Contains("@outlook.com"));
+
+            bool hasVerifyKeyword =
+                sender.Contains("verify") ||
+                sender.Contains("security") ||
+                sender.Contains("account") ||
+                sender.Contains("admin");
+
+            bool hasStrangeFormat =
+                Regex.IsMatch(sender, @"\d{4,}") ||
+                sender.Contains("secure-login") ||
+                sender.Contains("customer-service");
+
+            return usesFreeEmailForSupport || hasVerifyKeyword || hasStrangeFormat;
+        }
+
+        private bool ContainsUrgentLanguage(string text)
+        {
+            string[] urgentWords =
+            {
+                "urgent",
+                "immediately",
+                "within 24 hours",
+                "last warning",
+                "final warning",
+                "act now",
+                "limited time",
+                "your account will be suspended",
+                "account suspended",
+                "blocked",
+                "locked",
+                "verify now"
+            };
+
+            return urgentWords.Any(word => text.Contains(word));
+        }
+
+        private bool ContainsCredentialRequest(string text)
+        {
+            string[] credentialWords =
+            {
+                "password",
+                "otp",
+                "one time password",
+                "login",
+                "log in",
+                "username",
+                "bank account",
+                "credit card",
+                "debit card",
+                "pin number",
+                "security code",
+                "confirm your identity",
+                "update your details"
+            };
+
+            return credentialWords.Any(word => text.Contains(word));
+        }
+
+        private bool ContainsFinancialOrAccountWarning(string text)
+        {
+            string[] warningWords =
+            {
+                "payment",
+                "invoice",
+                "refund",
+                "transaction",
+                "bank",
+                "account",
+                "verify your account",
+                "account verification",
+                "suspended",
+                "unauthorized access",
+                "billing"
+            };
+
+            return warningWords.Any(word => text.Contains(word));
+        }
+
+        private bool ContainsRewardOrPrizeLanguage(string text)
+        {
+            string[] rewardWords =
+            {
+                "winner",
+                "congratulations",
+                "claim your prize",
+                "free gift",
+                "reward",
+                "lottery",
+                "bonus",
+                "cash prize"
+            };
+
+            return rewardWords.Any(word => text.Contains(word));
+        }
+
+        private bool IsSuspiciousLink(string link)
+        {
+            if (string.IsNullOrWhiteSpace(link))
+                return false;
+
+            bool isShortened =
+                link.Contains("bit.ly") ||
+                link.Contains("tinyurl") ||
+                link.Contains("t.co") ||
+                link.Contains("goo.gl") ||
+                link.Contains("ow.ly");
+
+            bool isHttpOnly =
+                link.StartsWith("http://");
+
+            bool hasIpAddress =
+                Regex.IsMatch(link, @"http[s]?://\d{1,3}(\.\d{1,3}){3}");
+
+            bool hasSuspiciousWords =
+                link.Contains("login") ||
+                link.Contains("verify") ||
+                link.Contains("secure") ||
+                link.Contains("update") ||
+                link.Contains("account");
+
+            return isShortened || isHttpOnly || hasIpAddress || hasSuspiciousWords;
+        }
+
+        private bool IsRiskyAttachment(string attachment)
         {
             if (string.IsNullOrWhiteSpace(attachment))
-            {
-                return;
-            }
+                return false;
 
-            string[] riskyExtensions = { ".exe", ".zip", ".rar", ".bat", ".js", ".scr" };
-
-            foreach (string extension in riskyExtensions)
+            string[] riskyExtensions =
             {
-                if (attachment.EndsWith(extension))
-                {
-                    score += 20;
-                    issues.Add($"Attachment has a risky file extension: {extension}.");
-                }
-            }
+                ".zip",
+                ".rar",
+                ".exe",
+                ".bat",
+                ".cmd",
+                ".scr",
+                ".js",
+                ".vbs",
+                ".msi",
+                ".iso"
+            };
+
+            return riskyExtensions.Any(ext => attachment.EndsWith(ext));
         }
 
         private string GetRiskLevel(int score)
         {
             if (score >= 70)
-            {
                 return "Phishing";
-            }
 
             if (score >= 35)
-            {
                 return "Suspicious";
-            }
 
             return "Safe";
         }
 
-        private string GenerateSummary(string riskLevel, int score)
+        private void AddRecommendations(string riskLevel, List<string> detectedIssues, List<string> recommendations)
         {
             if (riskLevel == "Phishing")
             {
-                return $"This email is highly suspicious and likely to be phishing. The calculated risk score is {score}/100.";
+                recommendations.Add("Do not click any links or open any attachments in this email.");
+                recommendations.Add("Do not provide passwords, OTP codes, banking details, or personal information.");
+                recommendations.Add("Report the email to the relevant organization or IT/security team.");
+                recommendations.Add("Delete the email after reporting it.");
+            }
+            else if (riskLevel == "Suspicious")
+            {
+                recommendations.Add("Verify the sender through an official website or trusted contact method.");
+                recommendations.Add("Avoid clicking links until the email is confirmed to be legitimate.");
+                recommendations.Add("Check the domain name, attachment type, and message wording carefully.");
+            }
+            else
+            {
+                recommendations.Add("The email appears safe based on the current analysis.");
+                recommendations.Add("Continue to be cautious with unexpected links or attachments.");
+            }
+        }
+
+        private string GenerateSummary(string riskLevel, int finalScore, float aiProbability, List<string> detectedIssues)
+        {
+            int aiPercentage = Convert.ToInt32(aiProbability * 100);
+
+            if (riskLevel == "Phishing")
+            {
+                return $"The email is classified as Phishing with a risk score of {finalScore}. The AI model estimated a phishing probability of {aiPercentage}%, and the system detected multiple phishing indicators.";
             }
 
             if (riskLevel == "Suspicious")
             {
-                return $"This email contains several suspicious indicators. The calculated risk score is {score}/100.";
+                return $"The email is classified as Suspicious with a risk score of {finalScore}. The AI model estimated a phishing probability of {aiPercentage}%, and some suspicious indicators were detected.";
             }
 
-            return $"This email has a low phishing risk based on the current checks. The calculated risk score is {score}/100.";
+            return $"The email is classified as Safe with a risk score of {finalScore}. The AI model estimated a phishing probability of {aiPercentage}%, and no major phishing indicators were found.";
         }
+
+        private List<PhishingTrainingData> GetTrainingData()
+        {
+            return new List<PhishingTrainingData>
+            {
+                new PhishingTrainingData
+                {
+                    Text = "Urgent your account will be suspended verify your password immediately click this link login now",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Your bank account has been locked click here to update your details and confirm your identity",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Congratulations you won a cash prize claim your reward now by entering your personal details",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Payment failed update your billing information immediately to avoid account suspension",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Security alert suspicious login detected verify your account and enter your OTP",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Invoice attached open the zip file and complete payment immediately",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Dear customer your account has unusual activity click the secure login link to continue",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Final warning your email account will be closed unless you verify your login details",
+                    Label = true
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Meeting reminder for tomorrow at 10am please review the agenda before the discussion",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Your assignment feedback has been uploaded to the learning portal please check when available",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Thank you for your order your receipt is attached for your reference",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Project update the latest report is ready for review by the team",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Your appointment has been confirmed please arrive 10 minutes early",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Welcome to the course this email contains general information about the semester",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "The company newsletter for this month is now available",
+                    Label = false
+                },
+                new PhishingTrainingData
+                {
+                    Text = "Please find attached the meeting minutes from yesterday",
+                    Label = false
+                }
+            };
+        }
+    }
+
+    public class PhishingTrainingData
+    {
+        public string Text { get; set; } = string.Empty;
+
+        public bool Label { get; set; }
+    }
+
+    public class PhishingPrediction
+    {
+        [ColumnName("PredictedLabel")]
+        public bool PredictedLabel { get; set; }
+
+        public float Probability { get; set; }
+
+        public float Score { get; set; }
     }
 }

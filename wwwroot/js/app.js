@@ -1,19 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
-  setupMobileMenu();
-  setupAnalyzeForm();
-  loadAnalysisResultPage();
-  loadHistoryPage();
-  loadScanDetailsPage();
-  loadStats();
-  loadReportsPage();
-});
+    setupMobileMenu();
 
-document.addEventListener("DOMContentLoaded", function () {
-  setupRegisterForm();
-  setupLoginForm();
-  setupLogoutButtons();
-  protectPrivatePages();
-  showCurrentUser();
+    // Authentication-related setup
+    setupRegisterForm();
+    setupLoginForm();
+    setupLogoutButtons();
+
+    // Check login before loading protected page data
+    const isAllowed = protectPrivatePages();
+
+    if (!isAllowed) {
+        return;
+    }
+
+    showCurrentUser();
+
+    // Page-specific backend loading
+    setupAnalyzeForm();
+    loadAnalysisResultPage();
+    loadHistoryPage();
+    loadScanDetailsPage();
+    loadStats();
+    loadReportsPage();
 });
 
 function setupRegisterForm() {
@@ -117,18 +125,21 @@ function setupLogoutButtons() {
 }
 
 function protectPrivatePages() {
-  const publicPages = ["landing", "login", "register"];
-  const page = document.body.dataset.page;
+    const publicPages = ["landing", "login", "register"];
+    const page = document.body.dataset.page;
 
-  if (publicPages.includes(page)) {
-    return;
-  }
+    if (publicPages.includes(page)) {
+        return true;
+    }
 
-  const user = localStorage.getItem("loggedInUser");
+    const user = localStorage.getItem("loggedInUser");
 
-  if (!user) {
-    window.location.href = "login.html";
-  }
+    if (!user) {
+        window.location.href = "login.html";
+        return false;
+    }
+
+    return true;
 }
 
 function showCurrentUser() {
@@ -161,45 +172,48 @@ function setupMobileMenu() {
   }
 }
 
-function setupAnalyzeForm() {
-  const analyzeForm = document.getElementById("analyzeForm");
+async function setupAnalyzeForm() {
+    const analyzeForm = document.getElementById("analyzeForm");
 
-  if (!analyzeForm) return;
+    if (!analyzeForm) return;
 
-  analyzeForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
+    analyzeForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    const emailData = {
-      senderEmail: document.getElementById("senderEmail")?.value || "",
-      subject: document.getElementById("subject")?.value || "",
-      emailBody: document.getElementById("emailBody")?.value || "",
-      link: document.getElementById("link")?.value || "",
-      attachmentName: document.getElementById("attachmentName")?.value || ""
-    };
+        const formData = new FormData();
 
-    try {
-      const response = await fetch("/api/emailanalysis/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(emailData)
-      });
+        formData.append("SenderEmail", document.getElementById("senderEmail").value);
+        formData.append("Subject", document.getElementById("subject").value);
+        formData.append("EmailBody", document.getElementById("emailBody").value);
+        formData.append("Link", document.getElementById("link").value);
 
-      if (!response.ok) {
-        throw new Error("Failed to analyze email.");
-      }
+        const attachmentFile = document.getElementById("attachmentFile").files[0];
 
-      const result = await response.json();
+        if (attachmentFile) {
+            formData.append("AttachmentFile", attachmentFile);
+        }
 
-      localStorage.setItem("latestAnalysisResult", JSON.stringify(result));
-      localStorage.setItem("latestEmailData", JSON.stringify(emailData));
+        try {
+            const response = await fetch("/api/emailanalysis/analyze-upload", {
+                method: "POST",
+                body: formData
+            });
 
-      window.location.href = "analysis-result.html";
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
-  });
+            if (!response.ok) {
+                alert("Failed to analyze email.");
+                return;
+            }
+
+            const result = await response.json();
+
+            localStorage.setItem("latestAnalysisResult", JSON.stringify(result));
+
+            window.location.href = "analysis-result.html";
+        } catch (error) {
+            console.error("Analyze upload error:", error);
+            alert("Something went wrong while analyzing the email.");
+        }
+    });
 }
 
 function loadAnalysisResultPage() {
@@ -239,48 +253,68 @@ function loadAnalysisResultPage() {
 }
 
 async function loadHistoryPage() {
-  if (document.body.dataset.page !== "history") return;
+    if (document.body.dataset.page !== "history") {
+        return;
+    }
 
-  const tableBody = document.getElementById("historyTableBody");
-  if (!tableBody) return;
+    const tableBody = document.getElementById("historyTableBody");
 
-  try {
-    const response = await fetch("/api/emailanalysis/history");
-    if (!response.ok) throw new Error("Failed to load history.");
+    if (!tableBody) {
+        console.log("historyTableBody not found");
+        return;
+    }
 
-    const history = await response.json();
-    tableBody.innerHTML = "";
+    try {
+        const response = await fetch("/api/emailanalysis/history");
 
-    if (history.length === 0) {
-      tableBody.innerHTML = `
+        if (!response.ok) {
+            throw new Error("Failed to load history. Status: " + response.status);
+        }
+
+        const history = await response.json();
+
+        console.log("History loaded:", history);
+
+        tableBody.innerHTML = "";
+
+        if (!Array.isArray(history) || history.length === 0) {
+            tableBody.innerHTML = `
         <tr>
           <td colspan="6">No scan history found.</td>
         </tr>
       `;
-      return;
-    }
+            return;
+        }
 
-    history.forEach(function (item) {
-      const row = document.createElement("tr");
+        history.forEach(function (item) {
+            const row = document.createElement("tr");
 
-      row.innerHTML = `
+            row.innerHTML = `
         <td>${item.id}</td>
-        <td>${escapeHtml(item.senderEmail)}</td>
-        <td>${escapeHtml(item.subject)}</td>
-        <td><span class="badge ${getBadgeClass(item.riskLevel)}">${item.riskLevel}</span></td>
-        <td>${item.riskScore}/100</td>
-        <td><a class="btn small" href="scan-details.html?id=${item.id}">View</a></td>
+        <td>${escapeHtml(item.senderEmail || "-")}</td>
+        <td>${escapeHtml(item.subject || "-")}</td>
+        <td>
+          <span class="badge ${getBadgeClass(item.riskLevel)}">
+            ${item.riskLevel || "-"}
+          </span>
+        </td>
+        <td>${item.riskScore ?? 0}/100</td>
+        <td>
+          <a class="btn small" href="scan-details.html?id=${item.id}">View</a>
+        </td>
       `;
 
-      tableBody.appendChild(row);
-    });
-  } catch (error) {
-    tableBody.innerHTML = `
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error(error);
+
+        tableBody.innerHTML = `
       <tr>
-        <td colspan="6">Error loading scan history.</td>
+        <td colspan="6">Error loading scan history. Please check browser console.</td>
       </tr>
     `;
-  }
+    }
 }
 
 async function loadScanDetailsPage() {
